@@ -16,23 +16,24 @@ export const getInitialRandomTile = (max: number = 16) => {
 };
 
 export function moveAndMerge(line: number[]): number[] {
-  const filtered = line.filter(num => num !== 0);
+  const filtered = line.filter((num) => num !== 0);
 
   for (let i = 0; i < filtered.length - 1; i++) {
     if (filtered[i] === filtered[i + 1]) {
       filtered[i] *= 2;
+      setScore(filtered[i]);
       filtered[i + 1] = 0;
     }
   }
 
-  const merged = filtered.filter(num => num !== 0);
+  const merged = filtered.filter((num) => num !== 0);
   while (merged.length < 4) merged.push(0);
 
   return merged;
 }
 
 export function transpose(matrix: number[][]): number[][] {
-  return matrix[0].map((_, i) => matrix.map(row => row[i]));
+  return matrix[0].map((_, i) => matrix.map((row) => row[i]));
 }
 
 export function boardsEqual(a: number[][], b: number[][]): boolean {
@@ -50,7 +51,20 @@ export function addRandomTile(board: number[][]): number[][] {
   if (emptyCells.length === 0) return board;
 
   const [r, c] = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-  const newBoard = board.map(row => [...row]);
+  const newBoard = board.map((row) => [...row]);
   newBoard[r][c] = Math.random() < 0.9 ? 2 : 4;
   return newBoard;
 }
+
+// const getscore = localStorage.getItem("score")
+
+export const setScore = (score: number) => {
+  if (typeof window !== "undefined") {
+    const previousScore = Number(localStorage.getItem("score") || 0);
+    const currentScore = previousScore + score;
+    localStorage.setItem("score", currentScore.toString());
+
+    const bestScore = Number(localStorage.getItem("bestScore") || 0);
+    localStorage.setItem("bestScore", Math.max(currentScore, bestScore).toString());
+  }
+};
